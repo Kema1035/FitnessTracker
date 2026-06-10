@@ -1,0 +1,770 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FitnessTracker.ViewModels"
+        x:Class="FitnessTracker.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="FitTracker"
+        Width="1300" Height="820"
+        Background="#0A0E1A">
+
+    <Window.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                        <GradientStop Color="#2563EB" Offset="0"/>
+                        <GradientStop Color="#06B6D4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="18,11"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#1C2236"/>
+            <Setter Property="Foreground" Value="#F87171"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#F8717130"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.success">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                        <GradientStop Color="#059669" Offset="0"/>
+                        <GradientStop Color="#0891B2" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#131929"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#1E2D47"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#131929"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#1E2D47"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="Foreground" Value="#4B5A72"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="22"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
+        </Style>
+        <Style Selector="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#4B5A72"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="18,14"/>
+            <Setter Property="MinWidth" Value="195"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TabItem:selected">
+            <Setter Property="Background" Value="#162032"/>
+            <Setter Property="Foreground" Value="#60A5FA"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="#0D1525"/>
+            <Setter Property="Foreground" Value="#4B5A72"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#1E2D47"/>
+        </Style>
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+    </Window.Styles>
+
+    <TabControl TabStripPlacement="Left">
+
+        <!-- TAB: DASHBOARD -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12" Width="165">
+                    <Border Background="#1C2D45" CornerRadius="10" Width="32" Height="32">
+                        <TextBlock Text="⊞" Foreground="#60A5FA" FontSize="14"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                </StackPanel>
+            </TabItem.Header>
+            <ScrollViewer Background="#0A0E1A">
+                <StackPanel Margin="28,24,28,28">
+                    <TextBlock Text="Dashboard" Foreground="#F1F5F9"
+                               FontSize="26" FontWeight="Bold" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Foreground="#3B82F6" FontSize="13" Margin="0,0,0,24"/>
+
+                    <!-- Stat cards -->
+                    <Grid ColumnDefinitions="*,*,*" Margin="0,0,0,20">
+                        <Border Grid.Column="0" CornerRadius="18" Padding="20,18" Margin="0,0,8,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="140%,140%">
+                                    <GradientStop Color="#1E3A5F" Offset="0"/>
+                                    <GradientStop Color="#0F1D35" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                                <TextBlock Text="WORKOUTS" Foreground="#60A5FA" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                                <TextBlock Text="{Binding GesamtWorkouts}" Foreground="White" FontSize="42" FontWeight="Bold"/>
+                                <TextBlock Text="gesamt" Foreground="#3B82F650" FontSize="12" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="18" Padding="20,18" Margin="4,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="140%,140%">
+                                    <GradientStop Color="#064E3B" Offset="0"/>
+                                    <GradientStop Color="#052E20" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                                <TextBlock Text="KALORIEN" Foreground="#34D399" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                                <TextBlock Text="{Binding GesamtKalorien}" Foreground="White" FontSize="42" FontWeight="Bold"/>
+                                <TextBlock Text="kcal gesamt" Foreground="#10B98150" FontSize="12" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" CornerRadius="18" Padding="20,18" Margin="8,0,0,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="140%,140%">
+                                    <GradientStop Color="#431407" Offset="0"/>
+                                    <GradientStop Color="#2C0D04" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <StackPanel>
+                                <TextBlock Text="GEWICHT" Foreground="#FB923C" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                                <TextBlock Text="{Binding AktuellesGewicht}" Foreground="White" FontSize="42" FontWeight="Bold"/>
+                                <TextBlock Text="aktuell" Foreground="#F9731650" FontSize="12" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Kalorien Ring -->
+                    <Border Classes="card" Margin="0,0,0,14">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Grid Grid.Column="0" Width="160" Height="160" Margin="0,0,28,0">
+                                <Canvas Width="160" Height="160">
+                                    <Ellipse Width="160" Height="160" Stroke="#1E2D47" StrokeThickness="14" Fill="Transparent"/>
+                                    <Path Stroke="#34D399" StrokeThickness="14" Fill="Transparent"
+                                          StrokeLineCap="Round"
+                                          Data="{Binding KalorienArcData}"
+                                          Canvas.Left="0" Canvas.Top="0"/>
+                                </Canvas>
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding KalorienRestlich}" Foreground="White"
+                                               FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="verbleibend" Foreground="#4B5A72" FontSize="10" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="12">
+                                <Grid ColumnDefinitions="*,*,*" Margin="0,0,0,8">
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="GEGESSEN" Foreground="#4B5A72" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding KalorienVerbraucht}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="kcal" Foreground="#34D399" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="VERBRANNT" Foreground="#4B5A72" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding WorkoutKalorienVerbrannt}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="kcal" Foreground="#60A5FA" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="ZIEL" Foreground="#4B5A72" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding KalorienZiel}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="kcal" Foreground="#FB923C" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <DockPanel>
+                                        <TextBlock Text="Kohlenhydrate" Foreground="#94A3B8" FontSize="12"/>
+                                        <TextBlock Text="{Binding GesamtKohlenhydrate, StringFormat={}{0:F1} g}" Foreground="#34D399" FontSize="12" HorizontalAlignment="Right"/>
+                                    </DockPanel>
+                                    <Border Height="6" CornerRadius="3" Background="#1E2D47">
+                                        <Border Height="6" CornerRadius="3" HorizontalAlignment="Left" Width="{Binding KohlenhydrateBarWidth}">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                                    <GradientStop Color="#059669" Offset="0"/>
+                                                    <GradientStop Color="#34D399" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <DockPanel>
+                                        <TextBlock Text="Protein" Foreground="#94A3B8" FontSize="12"/>
+                                        <TextBlock Text="{Binding GesamtProtein, StringFormat={}{0:F1} g}" Foreground="#60A5FA" FontSize="12" HorizontalAlignment="Right"/>
+                                    </DockPanel>
+                                    <Border Height="6" CornerRadius="3" Background="#1E2D47">
+                                        <Border Height="6" CornerRadius="3" HorizontalAlignment="Left" Width="{Binding ProteinBarWidth}">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                                    <GradientStop Color="#2563EB" Offset="0"/>
+                                                    <GradientStop Color="#06B6D4" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Spacing="4">
+                                    <DockPanel>
+                                        <TextBlock Text="Fett" Foreground="#94A3B8" FontSize="12"/>
+                                        <TextBlock Text="{Binding GesamtFett, StringFormat={}{0:F1} g}" Foreground="#FB923C" FontSize="12" HorizontalAlignment="Right"/>
+                                    </DockPanel>
+                                    <Border Height="6" CornerRadius="3" Background="#1E2D47">
+                                        <Border Height="6" CornerRadius="3" HorizontalAlignment="Left" Width="{Binding FettBarWidth}">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                                    <GradientStop Color="#D97706" Offset="0"/>
+                                                    <GradientStop Color="#FB923C" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Heutige Zusammenfassung -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Text="Heutige Zusammenfassung" Foreground="#F1F5F9"
+                                       FontSize="16" FontWeight="Bold" Margin="0,0,0,16"/>
+                            <Grid ColumnDefinitions="*,*,*" Margin="0,0,0,16">
+                                <Border Grid.Column="0" Background="#0D1525" CornerRadius="14" Padding="16,12" Margin="0,0,6,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="🍽" FontSize="20" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteKalorien}" Foreground="White"
+                                                   FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="kcal heute" Foreground="#34D399" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Background="#0D1525" CornerRadius="14" Padding="16,12" Margin="3,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="🏋" FontSize="20" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteWorkouts}" Foreground="White"
+                                                   FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Workouts heute" Foreground="#60A5FA" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Background="#0D1525" CornerRadius="14" Padding="16,12" Margin="6,0,0,0">
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <TextBlock Text="⏱" FontSize="20" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteWorkoutDauer}" Foreground="White"
+                                                   FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="Min trainiert" Foreground="#FB923C" FontSize="11" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <Border Background="#0D1525" CornerRadius="14" Padding="16,12">
+                                <Grid ColumnDefinitions="*,*,*">
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="PROTEIN" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteProtein, StringFormat={}{0} g}" Foreground="#60A5FA"
+                                                   FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="KOHLENHYDRATE" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteKohlenhydrate, StringFormat={}{0} g}" Foreground="#34D399"
+                                                   FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="FETT" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HeuteFett, StringFormat={}{0} g}" Foreground="#FB923C"
+                                                   FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- TAB: WORKOUTS -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12" Width="165">
+                    <Border Background="#1C2D45" CornerRadius="10" Width="32" Height="32">
+                        <TextBlock Text="🏋" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Workouts" VerticalAlignment="Center"/>
+                </StackPanel>
+            </TabItem.Header>
+            <Grid RowDefinitions="Auto,*" Background="#0A0E1A" Margin="28,24,28,28">
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Workouts" Foreground="#F1F5F9" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Text="NEUES WORKOUT" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" Margin="0,0,0,14"/>
+                            <Grid ColumnDefinitions="*,*,*,*,Auto" RowDefinitions="Auto,Auto">
+                                <TextBlock Classes="label" Text="TYP" Grid.Column="0"/>
+                                <TextBlock Classes="label" Text="DAUER (MIN)" Grid.Column="1" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="KALORIEN" Grid.Column="2" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="NOTIZEN" Grid.Column="3" Margin="8,0,0,5"/>
+                                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewWorkoutTyp}" PlaceholderText="z.B. Laufen"/>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewWorkoutDauer}"/>
+                                <TextBox Grid.Column="2" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewWorkoutKalorien}"/>
+                                <TextBox Grid.Column="3" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewWorkoutNotizen}"/>
+                                <Button Classes="primary" Content="+ Hinzufuegen" Grid.Column="4" Grid.Row="1" VerticalAlignment="Bottom" Command="{Binding AddWorkoutCommand}"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                <Border Classes="card" Grid.Row="1">
+    <Grid RowDefinitions="*,Auto,Auto,Auto">
+        <DockPanel Grid.Row="0">
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+                <TextBlock Text="Workout-Verlauf" Foreground="#F1F5F9" FontSize="15" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                    <Button Classes="danger" Content="Loeschen" Command="{Binding DeleteWorkoutCommand}"/>
+                    <Button Classes="success" Content="Excel Export" Command="{Binding ExportWorkoutsCommand}"/>
+                </StackPanel>
+            </DockPanel>
+            <DataGrid ItemsSource="{Binding Workouts}" SelectedItem="{Binding SelectedWorkout}"
+                      AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="DATUM" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="110"/>
+                    <DataGridTextColumn Header="TYP" Binding="{Binding Typ}" Width="*"/>
+                    <DataGridTextColumn Header="DAUER (MIN)" Binding="{Binding Dauer}" Width="110"/>
+                    <DataGridTextColumn Header="KALORIEN" Binding="{Binding Kalorien}" Width="100"/>
+                    <DataGridTextColumn Header="NOTIZEN" Binding="{Binding Notizen}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <!-- Uebungen des ausgewaehlten Workouts -->
+        <Border Grid.Row="1" Background="#0D1525" CornerRadius="14" Padding="16" Margin="0,12,0,0">
+            <StackPanel>
+                <TextBlock Text="UEBUNGEN DIESES WORKOUTS" Foreground="#4B5A72"
+                           FontSize="10" FontWeight="Bold" Margin="0,0,0,12"/>
+                <Grid ColumnDefinitions="*,*,*,*,Auto" RowDefinitions="Auto,Auto" Margin="0,0,0,8">
+                    <TextBlock Classes="label" Text="UEBUNG" Grid.Column="0"/>
+                    <TextBlock Classes="label" Text="GEWICHT (KG)" Grid.Column="1" Margin="8,0,0,5"/>
+                    <TextBlock Classes="label" Text="WIEDERHOLUNGEN" Grid.Column="2" Margin="8,0,0,5"/>
+                    <TextBlock Classes="label" Text="SAETZE" Grid.Column="3" Margin="8,0,0,5"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungName}" PlaceholderText="z.B. Bankdruecken"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungGewicht}"/>
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungWiederholungen}"/>
+                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungSaetze}"/>
+                    <Button Classes="primary" Content="+" Grid.Column="4" Grid.Row="1"
+                            Width="44" VerticalAlignment="Bottom"
+                            Command="{Binding AddUebungCommand}"/>
+                </Grid>
+                <DataGrid ItemsSource="{Binding Uebungen}" SelectedItem="{Binding SelectedUebung}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          GridLinesVisibility="Horizontal" MaxHeight="150">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="UEBUNG" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="GEWICHT (KG)" Binding="{Binding Gewicht}" Width="110"/>
+                        <DataGridTextColumn Header="WDHL." Binding="{Binding Wiederholungen}" Width="80"/>
+                        <DataGridTextColumn Header="SAETZE" Binding="{Binding Saetze}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button Classes="danger" Content="Uebung loeschen"
+                        HorizontalAlignment="Right" Margin="0,8,0,0"
+                        Command="{Binding DeleteUebungCommand}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Border>
+            </Grid>
+        </TabItem>
+
+        <!-- TAB: ERNAEHRUNG -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12" Width="165">
+                    <Border Background="#1C2D45" CornerRadius="10" Width="32" Height="32">
+                        <TextBlock Text="🥗" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Ernaehrung" VerticalAlignment="Center"/>
+                </StackPanel>
+            </TabItem.Header>
+            <ScrollViewer Background="#0A0E1A">
+                <StackPanel Margin="28,24,28,28">
+                    <TextBlock Text="Ernaehrung" Foreground="#F1F5F9" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                    <!-- Produkt Suche -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Text="PRODUKT SUCHEN (Open Food Facts)" Foreground="#4B5A72"
+                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,14"/>
+                            <Grid ColumnDefinitions="*,Auto,120,120" ColumnSpacing="10" Margin="0,0,0,12">
+                                <TextBox Grid.Column="0" Text="{Binding FoodSearchQuery}"
+                                         PlaceholderText="z.B. Joghurt, Vollkornbrot... (Suche startet automatisch)"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="Menge(g):" Foreground="#94A3B8" VerticalAlignment="Center" FontSize="12"/>
+                                    <TextBox Text="{Binding FoodMenge}" Width="65"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="2" SelectedItem="{Binding NewFoodTyp}"
+                                          ItemsSource="{Binding MahlzeitTypen}"/>
+                                <TextBlock Grid.Column="3" Text="← Mahlzeit-Typ" Foreground="#4B5A72" FontSize="11" VerticalAlignment="Center"/>
+                            </Grid>
+                            <ListBox ItemsSource="{Binding FoodSearchResults}"
+                                     SelectedItem="{Binding SelectedFoodProduct}"
+                                     MaxHeight="220" Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#0D1525" CornerRadius="12" Padding="14,10" Margin="0,3">
+                                            <DockPanel>
+                                                <Button Classes="success" Content="+ Hinzufuegen"
+                                                        DockPanel.Dock="Right"
+                                                        Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).AddFoodProductCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" Foreground="#E2E8F0" FontWeight="SemiBold" FontSize="13"/>
+                                                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,3,0,0">
+                                                        <TextBlock Text="{Binding Marke}" Foreground="#4B5A72" FontSize="11"/>
+                                                        <TextBlock Text="{Binding Kalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11"/>
+                                                        <TextBlock Text="{Binding Protein, StringFormat=P: {0:F1}g}" Foreground="#60A5FA" FontSize="11"/>
+                                                        <TextBlock Text="{Binding Kohlenhydrate, StringFormat=K: {0:F1}g}" Foreground="#FB923C" FontSize="11"/>
+                                                        <TextBlock Text="{Binding Fett, StringFormat=F: {0:F1}g}" Foreground="#F87171" FontSize="11"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Manuell hinzufuegen -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Text="MANUELL HINZUFUEGEN" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" Margin="0,0,0,14"/>
+                            <Grid ColumnDefinitions="*,*,*,*,*,120,Auto" RowDefinitions="Auto,Auto">
+                                <TextBlock Classes="label" Text="NAME" Grid.Column="0"/>
+                                <TextBlock Classes="label" Text="KALORIEN" Grid.Column="1" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="PROTEIN (G)" Grid.Column="2" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="KOHLENHYDRATE (G)" Grid.Column="3" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="FETT (G)" Grid.Column="4" Margin="8,0,0,5"/>
+                                <TextBlock Classes="label" Text="TYP" Grid.Column="5" Margin="8,0,0,5"/>
+                                <TextBox Grid.Column="0" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewMahlzeitName}" PlaceholderText="z.B. Haferflocken"/>
+                                <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewMahlzeitKalorien}"/>
+                                <TextBox Grid.Column="2" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewMahlzeitProtein}"/>
+                                <TextBox Grid.Column="3" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewMahlzeitKohlenhydrate}"/>
+                                <TextBox Grid.Column="4" Grid.Row="1" Margin="0,0,8,0" Text="{Binding NewMahlzeitFett}"/>
+                                <ComboBox Grid.Column="5" Grid.Row="1" Margin="0,0,8,0"
+                                          SelectedItem="{Binding NewMahlzeitTyp}"
+                                          ItemsSource="{Binding MahlzeitTypen}"/>
+                                <Button Classes="primary" Content="+" Grid.Column="6" Grid.Row="1" VerticalAlignment="Bottom" Command="{Binding AddMahlzeitCommand}" Width="44"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Gruppierte Mahlzeiten -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                        <Border Classes="card" Grid.Column="0">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Background="#1E3A5F" CornerRadius="8" Width="28" Height="28">
+                                            <TextBlock Text="☕" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Fruehstueck" Foreground="#F1F5F9" FontSize="14" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding FruehstueckKalorien, StringFormat={}{0} kcal}" Foreground="#60A5FA" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding Fruehstueck}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#0D1525" CornerRadius="10" Padding="12,8" Margin="0,3">
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Kalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="#E2E8F0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="card" Grid.Column="1">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Background="#064E3B" CornerRadius="8" Width="28" Height="28">
+                                            <TextBlock Text="🌞" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Mittagessen" Foreground="#F1F5F9" FontSize="14" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding MittagessenKalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding Mittagessen}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#0D1525" CornerRadius="10" Padding="12,8" Margin="0,3">
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Kalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="#E2E8F0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                        <Border Classes="card" Grid.Column="0">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Background="#431407" CornerRadius="8" Width="28" Height="28">
+                                            <TextBlock Text="🌙" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Abendessen" Foreground="#F1F5F9" FontSize="14" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding AbendessenKalorien, StringFormat={}{0} kcal}" Foreground="#FB923C" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding Abendessen}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#0D1525" CornerRadius="10" Padding="12,8" Margin="0,3">
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Kalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="#E2E8F0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Classes="card" Grid.Column="1">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,12">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Background="#1E2D47" CornerRadius="8" Width="28" Height="28">
+                                            <TextBlock Text="🍎" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Snacks" Foreground="#F1F5F9" FontSize="14" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding SnacksKalorien, StringFormat={}{0} kcal}" Foreground="#94A3B8" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DockPanel>
+                                <ItemsControl ItemsSource="{Binding Snacks}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#0D1525" CornerRadius="10" Padding="12,8" Margin="0,3">
+                                                <DockPanel>
+                                                    <TextBlock Text="{Binding Kalorien, StringFormat={}{0} kcal}" Foreground="#34D399" FontSize="11" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Name}" Foreground="#E2E8F0" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Alle Mahlzeiten -->
+                    <Border Classes="card">
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+                                <TextBlock Text="Alle Mahlzeiten" Foreground="#F1F5F9" FontSize="15" FontWeight="Bold"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                                    <Button Classes="danger" Content="Loeschen" Command="{Binding DeleteMahlzeitCommand}"/>
+                                    <Button Classes="success" Content="Excel Export" Command="{Binding ExportMahlzeitenCommand}"/>
+                                </StackPanel>
+                            </DockPanel>
+                            <DataGrid ItemsSource="{Binding Mahlzeiten}" SelectedItem="{Binding SelectedMahlzeit}"
+                                      AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal" Height="200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="DATUM" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="100"/>
+                                    <DataGridTextColumn Header="TYP" Binding="{Binding Typ}" Width="100"/>
+                                    <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*"/>
+                                    <DataGridTextColumn Header="KALORIEN" Binding="{Binding Kalorien}" Width="90"/>
+                                    <DataGridTextColumn Header="PROTEIN" Binding="{Binding Protein}" Width="80"/>
+                                    <DataGridTextColumn Header="KOHLENHYDRATE" Binding="{Binding Kohlenhydrate}" Width="120"/>
+                                    <DataGridTextColumn Header="FETT" Binding="{Binding Fett}" Width="70"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <!-- TAB: GEWICHT -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12" Width="165">
+                    <Border Background="#1C2D45" CornerRadius="10" Width="32" Height="32">
+                        <TextBlock Text="⚖" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Gewicht" VerticalAlignment="Center"/>
+                </StackPanel>
+            </TabItem.Header>
+            <Grid RowDefinitions="Auto,Auto,*" Background="#0A0E1A" Margin="28,24,28,28">
+                <StackPanel Grid.Row="0">
+                    <TextBlock Text="Gewichtsverlauf" Foreground="#F1F5F9" FontSize="26" FontWeight="Bold" Margin="0,0,0,20"/>
+                    <Border Classes="card">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                                <TextBlock Classes="label" Text="GEWICHT (KG)"/>
+                                <TextBox Text="{Binding NewGewichtWert}" PlaceholderText="z.B. 75.5"/>
+                            </StackPanel>
+                            <Button Classes="primary" Content="+ Eintragen" Grid.Column="1" VerticalAlignment="Bottom" Command="{Binding AddGewichtCommand}"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <Border Classes="card" Grid.Row="1">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,12">
+                            <TextBlock Text="VERLAUF (LETZTE 10 EINTRAEGE)" Foreground="#4B5A72" FontSize="10" FontWeight="Bold"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="16">
+                                <TextBlock Text="{Binding GewichtMin, StringFormat=Min: {0:F1} kg}" Foreground="#4B5A72" FontSize="11"/>
+                                <TextBlock Text="{Binding GewichtMax, StringFormat=Max: {0:F1} kg}" Foreground="#4B5A72" FontSize="11"/>
+                            </StackPanel>
+                        </DockPanel>
+                        <Canvas Height="130" Width="900" Background="#0D1525" ClipToBounds="True"
+                                x:Name="GewichtCanvas"/>
+                    </StackPanel>
+                </Border>
+                <Border Classes="card" Grid.Row="2">
+                    <DockPanel>
+                        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+                            <TextBlock Text="Eintraege" Foreground="#F1F5F9" FontSize="15" FontWeight="Bold"/>
+                            <Button Classes="danger" Content="Loeschen" HorizontalAlignment="Right" Command="{Binding DeleteGewichtCommand}"/>
+                        </DockPanel>
+                        <DataGrid ItemsSource="{Binding Gewichte}" SelectedItem="{Binding SelectedGewicht}"
+                                  AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="DATUM" Binding="{Binding Datum, StringFormat=dd.MM.yyyy}" Width="*"/>
+                                <DataGridTextColumn Header="GEWICHT (KG)" Binding="{Binding Wert}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </TabItem>
+
+        <!-- TAB: PROFIL -->
+        <TabItem>
+            <TabItem.Header>
+                <StackPanel Orientation="Horizontal" Spacing="12" Width="165">
+                    <Border Background="#1C2D45" CornerRadius="10" Width="32" Height="32">
+                        <TextBlock Text="👤" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Profil" VerticalAlignment="Center"/>
+                </StackPanel>
+            </TabItem.Header>
+            <ScrollViewer Background="#0A0E1A">
+                <StackPanel Margin="28,24,28,28" MaxWidth="600">
+                    <TextBlock Text="Mein Profil" Foreground="#F1F5F9" FontSize="26" FontWeight="Bold" Margin="0,0,0,24"/>
+                    <Border Classes="card">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="PERSOENLICHE DATEN" Foreground="#4B5A72" FontSize="10" FontWeight="Bold" Margin="0,0,0,8"/>
+                            <StackPanel>
+                                <TextBlock Classes="label" Text="NAME"/>
+                                <TextBox Text="{Binding ProfilName}" PlaceholderText="Dein Name"/>
+                            </StackPanel>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Classes="label" Text="ALTER (JAHRE)"/>
+                                    <TextBox Text="{Binding ProfilAlter}" PlaceholderText="z.B. 21"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Classes="label" Text="GROESSE (CM)"/>
+                                    <TextBox Text="{Binding ProfilGroesse}" PlaceholderText="z.B. 183"/>
+                                </StackPanel>
+                            </Grid>
+                            <StackPanel>
+                                <TextBlock Classes="label" Text="GEWICHT (KG)"/>
+                                <TextBox Text="{Binding ProfilGewicht}" PlaceholderText="z.B. 75"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Classes="label" Text="ZIEL"/>
+                                <TextBox Text="{Binding ProfilZiel}" PlaceholderText="z.B. Gewicht halten"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Classes="label" Text="TAEGLICHE KALORIEN (KCAL)"/>
+                                <TextBox Text="{Binding ProfilKalorien}" PlaceholderText="z.B. 2500"/>
+                            </StackPanel>
+                            <Button Classes="primary" Content="Profil speichern"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Command="{Binding SaveProfilCommand}"
+                                    Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+    </TabControl>
+</Window>
