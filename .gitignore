@@ -4,3 +4,4 @@ publish/
 publish-win/
 *.user
 .DS_Store
+*.pdb
