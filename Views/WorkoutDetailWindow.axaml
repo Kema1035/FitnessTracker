@@ -1,0 +1,127 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FitnessTracker.ViewModels"
+        x:Class="FitnessTracker.Views.WorkoutDetailWindow"
+        x:DataType="vm:WorkoutDetailViewModel"
+        Title="Workout Details"
+        Width="800" Height="600"
+        Background="#0A0E1A">
+
+    <Window.Styles>
+        <Style Selector="Button.primary">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                        <GradientStop Color="#2563EB" Offset="0"/>
+                        <GradientStop Color="#06B6D4" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="18,11"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#1C2236"/>
+            <Setter Property="Foreground" Value="#F87171"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="BorderBrush" Value="#F8717130"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#131929"/>
+            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="BorderBrush" Value="#1E2D47"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="14,11"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="Foreground" Value="#4B5A72"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="RowBackground" Value="Transparent"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        </Style>
+        <Style Selector="DataGridColumnHeader">
+            <Setter Property="Background" Value="#0D1525"/>
+            <Setter Property="Foreground" Value="#4B5A72"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#1E2D47"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="28,24,28,28">
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="{Binding WorkoutTitel}" Foreground="#F1F5F9"
+                       FontSize="24" FontWeight="Bold"/>
+            <TextBlock Text="Doppelklick zum Öffnen — Übungen hinzufügen"
+                       Foreground="#4B5A72" FontSize="13" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" Background="#111827" CornerRadius="16" Padding="20" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="NEUE ÜBUNG" Foreground="#4B5A72"
+                           FontSize="10" FontWeight="Bold" Margin="0,0,0,14"/>
+                <Grid ColumnDefinitions="*,*,*,*,Auto" RowDefinitions="Auto,Auto">
+                    <TextBlock Classes="label" Text="ÜBUNG" Grid.Column="0"/>
+                    <TextBlock Classes="label" Text="GEWICHT (KG)" Grid.Column="1" Margin="8,0,0,5"/>
+                    <TextBlock Classes="label" Text="WIEDERHOLUNGEN" Grid.Column="2" Margin="8,0,0,5"/>
+                    <TextBlock Classes="label" Text="SÄTZE" Grid.Column="3" Margin="8,0,0,5"/>
+                    <TextBox Grid.Column="0" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungName}" PlaceholderText="z.B. Bankdrücken"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungGewicht}"/>
+                    <TextBox Grid.Column="2" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungWiederholungen}"/>
+                    <TextBox Grid.Column="3" Grid.Row="1" Margin="0,0,8,0"
+                             Text="{Binding NewUebungSaetze}"/>
+                    <Button Classes="primary" Content="+ Hinzufügen"
+                            Grid.Column="4" Grid.Row="1" VerticalAlignment="Bottom"
+                            Command="{Binding AddUebungCommand}"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="#111827" CornerRadius="16" Padding="20">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,14">
+                    <TextBlock Text="Übungen" Foreground="#F1F5F9"
+                               FontSize="15" FontWeight="Bold"/>
+                    <Button Classes="danger" Content="Löschen"
+                            HorizontalAlignment="Right"
+                            Command="{Binding DeleteUebungCommand}"/>
+                </DockPanel>
+                <DataGrid ItemsSource="{Binding Uebungen}"
+                          SelectedItem="{Binding SelectedUebung}"
+                          AutoGenerateColumns="False" IsReadOnly="True"
+                          GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ÜBUNG" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="GEWICHT (KG)" Binding="{Binding Gewicht}" Width="130"/>
+                        <DataGridTextColumn Header="WDHL." Binding="{Binding Wiederholungen}" Width="90"/>
+                        <DataGridTextColumn Header="SÄTZE" Binding="{Binding Saetze}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

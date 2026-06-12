@@ -11,6 +11,7 @@ using FitnessTracker.Models;
 using FitnessTracker.Repositories;
 using FitnessTracker.Services;
 
+
 namespace FitnessTracker.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
@@ -66,6 +67,7 @@ namespace FitnessTracker.ViewModels
         [ObservableProperty] private string gewichtChartPoints = "";
         [ObservableProperty] private double gewichtMin = 0;
         [ObservableProperty] private double gewichtMax = 100;
+        [ObservableProperty] private string kalorienRingColor = "#34D399";
 
         [ObservableProperty] private ObservableCollection<Ziel> ziele = new();
         [ObservableProperty] private string newZielBeschreibung = "";
@@ -112,6 +114,9 @@ namespace FitnessTracker.ViewModels
         [ObservableProperty] private decimal newUebungGewicht;
         [ObservableProperty] private int newUebungWiederholungen;
         [ObservableProperty] private int newUebungSaetze;
+        // AI
+        [ObservableProperty] private string aiAntwort = "";
+        [ObservableProperty] private bool aiLaeuft = false;
 
         private string _foodSearchQuery = "";
         public string FoodSearchQuery
@@ -128,8 +133,8 @@ namespace FitnessTracker.ViewModels
         [ObservableProperty] private ObservableCollection<FoodProduct> foodSearchResults = new();
         [ObservableProperty] private FoodProduct? selectedFoodProduct;
         [ObservableProperty] private int foodMenge = 100;
-        [ObservableProperty] private string newFoodTyp = "Fruehstueck";
-        public string[] MahlzeitTypen { get; } = { "Fruehstueck", "Mittagessen", "Abendessen", "Snack" };
+        [ObservableProperty] private string newFoodTyp = "Frühstück";
+        public string[] MahlzeitTypen { get; } = { "Frühstück", "Mittagessen", "Abendessen", "Snack" };
 
         public MainWindowViewModel()
         {
@@ -170,6 +175,7 @@ namespace FitnessTracker.ViewModels
             var circumference = 2 * Math.PI * 73;
             Console.WriteLine($"Progress: {progress}, circumference: {circumference}, filled: {progress * circumference}, empty: {(1 - progress) * circumference}");
             KalorienDashArray = new AvaloniaList<double> { (1 - progress) * circumference, progress * circumference };
+            KalorienRingColor = totalKcal > ziel ? "#F87171" : "#34D399";
             // Arc для кружка
             var angle = progress * 360.0;
             var rad = angle * Math.PI / 180.0;
@@ -177,6 +183,8 @@ namespace FitnessTracker.ViewModels
             var x = cx + r * Math.Sin(rad);
             var y = cy - r * Math.Cos(rad);
             var largeArc = angle > 180 ? 1 : 0;
+            // Цвет кольца — зелёный если норма, красный если превышено
+            var ringColor = totalKcal > ziel ? "#F87171" : "#34D399";
             KalorienArcData = progress <= 0
                 ? ""
                 : progress >= 1
@@ -192,7 +200,7 @@ namespace FitnessTracker.ViewModels
             KohlenhydrateBarWidth = Math.Min((double)GesamtKohlenhydrate / maxGrams * maxWidth, maxWidth);
             FettBarWidth = Math.Min((double)GesamtFett / maxGrams * maxWidth, maxWidth);
 
-            Fruehstueck = new ObservableCollection<Mahlzeit>(Mahlzeiten.Where(m => m.Typ == "Fruehstueck"));
+            Fruehstueck = new ObservableCollection<Mahlzeit>(Mahlzeiten.Where(m => m.Typ == "Frühstück"));
             Mittagessen = new ObservableCollection<Mahlzeit>(Mahlzeiten.Where(m => m.Typ == "Mittagessen"));
             Abendessen = new ObservableCollection<Mahlzeit>(Mahlzeiten.Where(m => m.Typ == "Abendessen"));
             Snacks = new ObservableCollection<Mahlzeit>(Mahlzeiten.Where(m => m.Typ == "Snack" || string.IsNullOrEmpty(m.Typ)));
@@ -526,6 +534,54 @@ namespace FitnessTracker.ViewModels
                 $"Mahlzeiten_{DateTime.Today:yyyyMMdd}.xlsx");
             await _exportService.ExportMahlzeitenAsync(Mahlzeiten, path);
             StatusMessage = $"Exportiert: {path}";
+        }
+        
+        [RelayCommand]
+        private async Task GetAiAnalyseAsync()
+        {
+            AiLaeuft = true;
+            AiAntwort = "Analyse läuft...";
+
+            try
+            {
+                var prompt = $@"Du bist ein persönlicher Fitness- und Ernährungscoach. Analysiere folgende Daten und gib 3-4 konkrete motivierende Empfehlungen auf Deutsch:
+
+WORKOUTS (letzte {Workouts.Count}):
+{string.Join("\n", Workouts.Take(5).Select(w => $"- {w.Datum:dd.MM.yyyy}: {w.Typ}, {w.Dauer} Min, {w.Kalorien} kcal"))}
+
+ERNAEHRUNG (letzte Mahlzeiten):
+{string.Join("\n", Mahlzeiten.Take(5).Select(m => $"- {m.Name}, {m.Kalorien} kcal"))}
+
+GEWICHT: {AktuellesGewicht}
+TAGESZIEL: {ProfilKalorien} kcal
+HEUTE GEGESSEN: {HeuteKalorien} kcal";
+
+                using var client = new System.Net.Http.HttpClient();
+                client.Timeout = TimeSpan.FromSeconds(60);
+
+                var requestBody = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    model = "llama3.2:1b",
+                    prompt = prompt,
+                    stream = false
+                });
+
+                var response = await client.PostAsync(
+                    "http://localhost:11434/api/generate",
+                    new System.Net.Http.StringContent(requestBody, System.Text.Encoding.UTF8, "application/json"));
+
+                var json = await response.Content.ReadAsStringAsync();
+                var doc = System.Text.Json.JsonDocument.Parse(json);
+                AiAntwort = doc.RootElement.GetProperty("response").GetString() ?? "Keine Antwort";
+            }
+            catch (Exception ex)
+            {
+                AiAntwort = $"Fehler: {ex.Message}";
+            }
+            finally
+            {
+                AiLaeuft = false;
+            }
         }
     }
 }

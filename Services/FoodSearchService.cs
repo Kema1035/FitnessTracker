@@ -18,18 +18,55 @@ namespace FitnessTracker.Services
 
     public class FoodSearchService
     {
-        private static readonly HttpClient _client = new();
+        private static readonly HttpClient _client = new()
+        {
+            Timeout = TimeSpan.FromSeconds(15)
+        };
 
         public async Task<List<FoodProduct>> SearchAsync(string query)
+        {
+            for (int attempt = 0; attempt < 3; attempt++)
+            {
+                try
+                {
+                    var url = $"https://world.openfoodfacts.org/cgi/search.pl" +
+                              $"?search_terms={Uri.EscapeDataString(query)}" +
+                              $"&search_simple=1&action=process&json=1&page_size=8&lc=de&cc=de";
+
+                    var response = await _client.GetStringAsync(url);
+                    return ParseProducts(response);
+                }
+                catch (HttpRequestException ex) when (ex.Message.Contains("503") || ex.Message.Contains("502"))
+                {
+                    if (attempt < 2)
+                    {
+                        Console.WriteLine($"FoodSearch: Server nicht verfuegbar, Versuch {attempt + 2}/3...");
+                        await Task.Delay(2000 * (attempt + 1));
+                    }
+                    else
+                    {
+                        Console.WriteLine("FoodSearch: Server dauerhaft nicht verfuegbar");
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    Console.WriteLine("FoodSearch: Timeout - Server antwortet nicht");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"FoodSearch error: {ex.Message}");
+                    break;
+                }
+            }
+            return new List<FoodProduct>();
+        }
+
+        private List<FoodProduct> ParseProducts(string response)
         {
             var result = new List<FoodProduct>();
             try
             {
-                var url = $"https://world.openfoodfacts.org/cgi/search.pl" +
-                          $"?search_terms={Uri.EscapeDataString(query)}" +
-                          $"&search_simple=1&action=process&json=1&page_size=8&lc=de&cc=de";
-
-                var response = await _client.GetStringAsync(url);
                 var json = JsonDocument.Parse(response);
                 var products = json.RootElement.GetProperty("products");
 
@@ -44,7 +81,6 @@ namespace FitnessTracker.Services
                         if (string.IsNullOrWhiteSpace(name)) continue;
 
                         var marke = p.TryGetProperty("brands", out var b) ? b.GetString() ?? "" : "";
-
                         var nutriments = p.TryGetProperty("nutriments", out var nut) ? nut : default;
 
                         var kcal = nutriments.ValueKind != JsonValueKind.Undefined &&
@@ -75,7 +111,7 @@ namespace FitnessTracker.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"FoodSearch error: {ex.Message}");
+                Console.WriteLine($"FoodSearch parse error: {ex.Message}");
             }
             return result;
         }

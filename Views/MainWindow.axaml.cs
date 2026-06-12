@@ -14,21 +14,38 @@ namespace FitnessTracker.Views
             var vm = new MainWindowViewModel();
             DataContext = vm;
 
-            // Обновляем график когда меняются точки
             vm.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(vm.GewichtChartPoints))
                     DrawGewichtChart(vm.GewichtChartPoints);
+                if (e.PropertyName == nameof(vm.KalorienRingColor))
+                    UpdateRingColor(vm.KalorienRingColor);
             };
+
+            var workoutGrid = this.FindControl<DataGrid>("WorkoutDataGrid");
+            if (workoutGrid != null)
+                workoutGrid.DoubleTapped += (s, e) =>
+                {
+                    if (vm.SelectedWorkout != null)
+                    {
+                        var detailWindow = new WorkoutDetailWindow(vm.SelectedWorkout);
+                        detailWindow.Show();
+                    }
+                };
+        }
+
+        private void UpdateRingColor(string color)
+        {
+            var path = this.FindControl<Path>("KalorienArcPath");
+            if (path != null)
+                path.Stroke = new SolidColorBrush(Color.Parse(color));
         }
 
         private void DrawGewichtChart(string pointsStr)
         {
             var canvas = this.FindControl<Canvas>("GewichtCanvas");
             if (canvas == null) return;
-
             canvas.Children.Clear();
-
             if (string.IsNullOrWhiteSpace(pointsStr)) return;
 
             var parts = pointsStr.Split(' ');
@@ -42,7 +59,6 @@ namespace FitnessTracker.Views
 
             if (points.Count < 2) return;
 
-            // Рисуем линии между точками
             for (int i = 0; i < points.Count - 1; i++)
             {
                 var line = new Line
@@ -56,7 +72,6 @@ namespace FitnessTracker.Views
                 canvas.Children.Add(line);
             }
 
-            // Рисуем точки
             foreach (var pt in points)
             {
                 var dot = new Ellipse
